@@ -1,0 +1,220 @@
+import streamlit as st
+from math import pi
+
+st.set_page_config(
+    page_title="Manufacturing Operations Calculator",
+    layout="centered"
+)
+
+st.title("Manufacturing Operations Calculator")
+
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    "Spindle Speed",
+    "Turning Time",
+    "Milling Feed Rate",
+    "Drilling",
+    "Tool Life",
+    "MRR",
+    "Preferences"
+])
+
+# -----------------------------
+# SPINDLE SPEED
+# -----------------------------
+with tab1:
+    st.header("Spindle Speed Calculator")
+
+    speed = st.number_input(
+        "Cutting Speed (m/min)",
+        min_value=0.0
+    )
+
+    diameter = st.number_input(
+        "Diameter (mm)",
+        min_value=0.0
+    )
+
+    if st.button("Compute RPM"):
+        if diameter > 0:
+            rpm = (1000 * speed) / (pi * diameter)
+            st.success(f"RPM = {rpm:.2f}")
+
+# -----------------------------
+# TURNING TIME
+# -----------------------------
+with tab2:
+    st.header("Turning Time")
+
+    length = st.number_input(
+        "Length (mm)",
+        min_value=0.0,
+        key="turn_length"
+    )
+
+    feed = st.number_input(
+        "Feed (mm/rev)",
+        min_value=0.0,
+        key="turn_feed"
+    )
+
+    rpm = st.number_input(
+        "RPM",
+        min_value=0.0,
+        key="turn_rpm"
+    )
+
+    if st.button("Calculate Turning Time"):
+        if feed > 0 and rpm > 0:
+            time = length / (feed * rpm)
+            st.success(
+                f"Machining Time = {time:.2f} min"
+            )
+
+# -----------------------------
+# MILLING FEED RATE
+# -----------------------------
+with tab3:
+    st.header("Milling Feed Rate")
+
+    feed_per_tooth = st.number_input(
+        "Feed per Tooth",
+        min_value=0.0
+    )
+
+    teeth = st.number_input(
+        "Number of Teeth",
+        min_value=1,
+        step=1
+    )
+
+    spindle_speed = st.number_input(
+        "Spindle Speed (RPM)",
+        min_value=0.0
+    )
+
+    if st.button("Calculate Feed Rate"):
+        feed_rate = (
+            feed_per_tooth *
+            teeth *
+            spindle_speed
+        )
+
+        st.success(
+            f"Feed Rate = {feed_rate:.2f} mm/min"
+        )
+
+# -----------------------------
+# DRILLING
+# -----------------------------
+with tab4:
+    st.header("Drilling Time")
+
+    depth = st.number_input(
+        "Hole Depth (mm)",
+        min_value=0.0
+    )
+
+    drill_feed = st.number_input(
+        "Feed (mm/rev)",
+        min_value=0.0
+    )
+
+    drill_rpm = st.number_input(
+        "RPM",
+        min_value=0.0
+    )
+
+    if st.button("Calculate Drilling Time"):
+        if drill_feed > 0 and drill_rpm > 0:
+            drill_time = depth / (
+                drill_feed * drill_rpm
+            )
+
+            st.success(
+                f"Drilling Time = {drill_time:.2f} min"
+            )
+
+# -----------------------------
+# TOOL LIFE
+# -----------------------------
+with tab5:
+    st.header("Tool Life Calculator")
+
+    v = st.number_input(
+        "Cutting Speed V",
+        min_value=0.0
+    )
+
+    n = st.number_input(
+        "Taylor Exponent n",
+        min_value=0.01
+    )
+
+    c = st.number_input(
+        "Taylor Constant C",
+        min_value=0.0
+    )
+
+    if st.button("Calculate Tool Life"):
+        life = (c / v) ** (1 / n)
+        st.success(
+            f"Tool Life = {life:.2f} min"
+        )
+
+# -----------------------------
+# MRR
+# -----------------------------
+with tab6:
+    st.header("Material Removal Rate")
+
+    mrr_diameter = st.number_input(
+        "Diameter (mm)",
+        min_value=0.0,
+        key="mrr_d"
+    )
+
+    mrr_depth = st.number_input(
+        "Depth of Cut (mm)",
+        min_value=0.0,
+        key="mrr_depth"
+    )
+
+    mrr_feed = st.number_input(
+        "Feed (mm/rev)",
+        min_value=0.0,
+        key="mrr_feed"
+    )
+
+    mrr_rpm = st.number_input(
+        "RPM",
+        min_value=0.0,
+        key="mrr_rpm"
+    )
+
+    if st.button("Calculate MRR"):
+        removal_rate = (
+            pi *
+            mrr_diameter *
+            mrr_depth *
+            mrr_feed *
+            mrr_rpm
+        )
+
+        st.success(
+            f"MRR = {removal_rate:.2f} mm³/min"
+        )
+
+# -----------------------------
+# PREFERENCES
+# -----------------------------
+with tab7:
+    st.header("Preferences")
+
+    unit = st.radio(
+        "Choose Unit System",
+        ["Metric", "Imperial"]
+    )
+
+    st.info(
+        f"Current System: {unit}"
+    )
